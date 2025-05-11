@@ -1,0 +1,340 @@
+
+{
+  "directions": {
+    "programming": {
+      "name": "Программирование",
+      "topics": {
+        "python": {
+          "name": "Python",
+          "quizzes": [
+            {
+              "id": 1,
+              "questions": [
+                {
+                  "question": "Что такое Python?",
+                  "answers": ["Язык разметки", "Язык программирования", "База данных", "Фреймворк"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Какой оператор используется для создания цикла?",
+                  "answers": ["if", "while", "def", "class"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Как объявить список в Python?",
+                  "answers": ["array()", "{1, 2, 3}", "[1, 2, 3]", "(1, 2, 3)"],
+                  "correct_answer": 2
+                },
+                {
+                  "question": "Что такое PIP?",
+                  "answers": ["Интерпретатор Python", "Менеджер пакетов", "Текстовый редактор", "Операционная система"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Какое расширение у Python файлов?",
+                  "answers": [".py", ".python", ".pt", ".pyt"],
+                  "correct_answer": 0
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "questions": [
+                {
+                  "question": "Что такое Django?",
+                  "answers": ["База данных", "Веб-фреймворк", "Язык программирования", "Текстовый редактор"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Как создать виртуальное окружение в Python?",
+                  "answers": ["pip install venv", "python -m venv myenv", "virtualenv create", "env --new"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Что такое list comprehension?",
+                  "answers": ["Способ создания списков", "Тип данных", "Функция печати", "Метод сортировки"],
+                  "correct_answer": 0
+                },
+                {
+                  "question": "Как прочитать файл в Python?",
+                  "answers": ["read.file()", "open().read()", "file.open()", "load.file()"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Что такое lambda функция?",
+                  "answers": ["Анонимная функция", "Встроенная функция", "Класс", "Модуль"],
+                  "correct_answer": 0
+                }
+              ]
+            }
+          ]
+        },
+        "javascript": {
+          "name": "JavaScript",
+          "quizzes": [
+            {
+              "id": 1,
+              "questions": [
+                {
+                  "question": "Что такое JavaScript?",
+                  "answers": ["Компилятор", "Язык программирования", "Операционная система", "База данных"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Как объявить переменную в JavaScript?",
+                  "answers": ["var", "let", "const", "Все вышеперечисленное"],
+                  "correct_answer": 3
+                },
+                {
+                  "question": "Что такое DOM?",
+                  "answers": ["Data Object Model", "Document Object Model", "Digital Object Model", "Direct Object Model"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Что такое JSON?",
+                  "answers": ["JavaScript Object Notation", "Java Serial Object Network", "JavaScript Online Network", "Java Script Object Name"],
+                  "correct_answer": 0
+                },
+                {
+                  "question": "Как добавить комментарий в JavaScript?",
+                  "answers": ["// Comment", "# Comment", "<!-- Comment -->", "/* Comment */"],
+                  "correct_answer": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "science": {
+      "name": "Наука",
+      "topics": {
+        "physics": {
+          "name": "Физика",
+          "quizzes": [
+            {
+              "id": 1,
+              "questions": [
+                {
+                  "question": "Что такое гравитация?",
+                  "answers": ["Сила притяжения между массами", "Электромагнитное поле", "Ядерная реакция", "Химическая реакция"],
+                  "correct_answer": 0
+                },
+                {
+                  "question": "Кто открыл теорию относительности?",
+                  "answers": ["Исаак Ньютон", "Альберт Эйнштейн", "Нильс Бор", "Макс Планк"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Какая формула энергии?",
+                  "answers": ["E=mc²", "F=ma", "P=mv", "V=IR"],
+                  "correct_answer": 0
+                },
+                {
+                  "question": "Что измеряется в Джоулях?",
+                  "answers": ["Сила", "Энергия", "Скорость", "Масса"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Что такое квант?",
+                  "answers": ["Частица света", "Элементарная частица", "Неделимая порция энергии", "Атом"],
+                  "correct_answer": 2
+                }
+              ]
+            }
+          ]
+        },
+        "chemistry": {
+          "name": "Химия",
+          "quizzes": [
+            {
+              "id": 1,
+              "questions": [
+                {
+                  "question": "Что такое pH?",
+                  "answers": ["Показатель кислотности", "Температура", "Давление", "Масса"],
+                  "correct_answer": 0
+                },
+                {
+                  "question": "Какой символ у золота?",
+                  "answers": ["Ag", "Au", "Fe", "Cu"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Что такое молекула?",
+                  "answers": ["Атом", "Группа атомов", "Электрон", "Протон"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Какой газ самый распространенный в атмосфере?",
+                  "answers": ["Кислород", "Азот", "Углекислый газ", "Водород"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Что такое валентность?",
+                  "answers": ["Заряд атома", "Способность атома образовывать связи", "Масса атома", "Размер атома"],
+                  "correct_answer": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "geography": {
+      "name": "География",
+      "topics": {
+        "countries": {
+          "name": "Страны мира",
+          "quizzes": [
+            {
+              "id": 1,
+              "questions": [
+                {
+                  "question": "Какая самая большая страна в мире?",
+                  "answers": ["Китай", "США", "Россия", "Канада"],
+                  "correct_answer": 2
+                },
+                {
+                  "question": "Столица Японии?",
+                  "answers": ["Сеул", "Пекин", "Токио", "Киото"],
+                  "correct_answer": 2
+                },
+                {
+                  "question": "На каком континенте находится Египет?",
+                  "answers": ["Азия", "Африка", "Европа", "Южная Америка"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Какая страна самая населенная?",
+                  "answers": ["Индия", "Китай", "США", "Индонезия"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Какая самая маленькая страна в мире?",
+                  "answers": ["Монако", "Ватикан", "Сан-Марино", "Лихтенштейн"],
+                  "correct_answer": 1
+                }
+              ]
+            }
+          ]
+        },
+        "capitals": {
+          "name": "Столицы",
+          "quizzes": [
+            {
+              "id": 1,
+              "questions": [
+                {
+                  "question": "Столица Франции?",
+                  "answers": ["Лондон", "Париж", "Берлин", "Мадрид"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Столица Австралии?",
+                  "answers": ["Сидней", "Мельбурн", "Канберра", "Брисбен"],
+                  "correct_answer": 2
+                },
+                {
+                  "question": "Столица Бразилии?",
+                  "answers": ["Рио-де-Жанейро", "Сан-Паулу", "Бразилиа", "Салвадор"],
+                  "correct_answer": 2
+                },
+                {
+                  "question": "Столица Канады?",
+                  "answers": ["Торонто", "Монреаль", "Оттава", "Ванкувер"],
+                  "correct_answer": 2
+                },
+                {
+                  "question": "Столица Южной Кореи?",
+                  "answers": ["Токио", "Сеул", "Пхеньян", "Пусан"],
+                  "correct_answer": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "literature": {
+      "name": "Литература",
+      "topics": {
+        "russian_classics": {
+          "name": "Русская классика",
+          "quizzes": [
+            {
+              "id": 1,
+              "questions": [
+                {
+                  "question": "Кто написал 'Война и мир'?",
+                  "answers": ["Ф.М. Достоевский", "Л.Н. Толстой", "А.С. Пушкин", "И.С. Тургенев"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Кто автор 'Евгения Онегина'?",
+                  "answers": ["А.С. Пушкин", "М.Ю. Лермонтов", "Н.В. Гоголь", "А.П. Чехов"],
+                  "correct_answer": 0
+                },
+                {
+                  "question": "Кто написал 'Преступление и наказание'?",
+                  "answers": ["Л.Н. Толстой", "И.С. Тургенев", "Ф.М. Достоевский", "А.П. Чехов"],
+                  "correct_answer": 2
+                },
+                {
+                  "question": "Автор пьесы 'Вишневый сад'?",
+                  "answers": ["А.П. Чехов", "М. Горький", "А.Н. Островский", "И.С. Тургенев"],
+                  "correct_answer": 0
+                },
+                {
+                  "question": "Кто написал поэму 'Мертвые души'?",
+                  "answers": ["А.С. Пушкин", "Н.В. Гоголь", "М.Ю. Лермонтов", "Ф.М. Достоевский"],
+                  "correct_answer": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "art": {
+      "name": "Искусство",
+      "topics": {
+        "painting": {
+          "name": "Живопись",
+          "quizzes": [
+            {
+              "id": 1,
+              "questions": [
+                {
+                  "question": "Кто написал 'Мону Лизу'?",
+                  "answers": ["Леонардо да Винчи", "Микеланджело", "Рафаэль", "Рембрандт"],
+                  "correct_answer": 0
+                },
+                {
+                  "question": "Автор 'Звездной ночи'?",
+                  "answers": ["Клод Моне", "Винсент Ван Гог", "Пабло Пикассо", "Сальвадор Дали"],
+                  "correct_answer": 1
+                },
+                {
+                  "question": "Кто основал кубизм?",
+                  "answers": ["Винсент Ван Гог", "Клод Моне", "Пабло Пикассо", "Сальвадор Дали"],
+                  "correct_answer": 2
+                },
+                {
+                  "question": "Автор картины 'Крик'?",
+                  "answers": ["Эдвард Мунк", "Густав Климт", "Винсент Ван Гог", "Клод Моне"],
+                  "correct_answer": 0
+                },
+                {
+                  "question": "Кто написал 'Тайную вечерю'?",
+                  "answers": ["Микеланджело", "Леонардо да Винчи", "Рафаэль", "Караваджо"],
+                  "correct_answer": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}
