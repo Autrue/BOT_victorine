@@ -2,6 +2,7 @@ import sqlite3
 import random
 import logging
 import os
+import json
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder,
@@ -16,7 +17,7 @@ from telegram.ext import (
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "database.db")
 LOG_PATH = os.path.join(BASE_DIR, "logs", "bot.log")
-QUESTIONS_PATH = os.path.join(BASE_DIR, "questions.txt")
+QUESTIONS_PATH = os.path.join(BASE_DIR, "quiz_data.json")
 
 # Настройка логов
 os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
@@ -27,42 +28,27 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Токен вашего бота (замените на свой)
+# Токен вашего бота
 TOKEN = "7840043878:AAGdk0KsQGubiOxSRMh_UphOOUrqMiDbutU"
 
 # Множители для рулетки
 roulette_multipliers = [0, 0.1, 0.25, 0.5, 0.75, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 3, 10]
 
-# Загрузка вопросов
+# Загрузка вопросов из JSON
 def load_questions():
     try:
         with open(QUESTIONS_PATH, "r", encoding="utf-8") as file:
-            lines = [line.strip() for line in file if line.strip()]
-        
-        questions = []
-        for line in lines:
-            if "|" in line and line.count("/") >= 3:
-                question_part, answers_part = line.split("|", 1)
-                parts = [p.strip() for p in answers_part.split("/", 3)]
-                if len(parts) == 4:
-                    questions.append({
-                        "question": question_part.strip(),
-                        "correct": parts[0],
-                        "wrong": parts[1:4]
-                    })
-        
-        logger.info(f"Загружено {len(questions)} вопросов.")
-        return questions
-    
+            data = json.load(file)
+            return data["directions"]
     except Exception as e:
         logger.error(f"Ошибка при загрузке вопросов: {e}")
-        return []
+        return {}
 
-quiz_questions = load_questions()
+quiz_data = load_questions()
 
 # Проверка наличия вопросов
-if len(quiz_questions) < 1:
-    logger.error("Не найдено вопросов в файле questions.txt")
+if not quiz_data:
+    logger.error("Не найдено вопросов в файле quiz_data.json")
     exit(1)
 
 # Подключение к базе данных
@@ -100,59 +86,110 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     conn.commit()
     conn.close()
 
+    # Формируем список доступных направлений
+    keyboard = [
+        [InlineKeyboardButton(f"🎯 {quiz_data[direction]['name']}", callback_data=f"dir_{direction}")]
+        for direction in quiz_data.keys()
+    ]
+    
     await update.message.reply_text(
         "🎉 Добро пожаловать в викторину!\n\n"
-        "Доступные команды:\n"
-        "/quiz - начать викторину\n"
-        "/roulette - игра в рулетку\n"
-        "/score - ваш текущий счет\n\n"
-        "Формат вопросов: вопрос|правильный/неправильный1/неправильный2/неправильный3"
+        "Выберите направление:",
+        reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
-# Команда /quiz
-async def quiz(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.message.from_user.id
+# Обработка выбора направления
+async def handle_direction(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
     
-    # Выбираем 5 случайных вопросов
-    selected_questions = random.sample(quiz_questions, min(5, len(quiz_questions)))
-    context.user_data["questions"] = selected_questions
+    direction = query.data.replace("dir_", "")
+    
+    if direction not in quiz_data:
+        await query.message.reply_text("❌ Направление не найдено")
+        return
+    
+    # Создаем кнопки для тем
+    keyboard = [
+        [InlineKeyboardButton(
+            f"📚 {quiz_data[direction]['topics'][topic]['name']}",
+            callback_data=f"topic_{direction}_{topic}"
+        )]
+        for topic in quiz_data[direction]["topics"].keys()
+    ]
+    
+    await query.edit_message_text(
+        f"Выберите тему в разделе {quiz_data[direction]['name']}:",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
+# Обработка выбора темы
+async def handle_topic(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    
+    _, direction, topic = query.data.split("_")
+    
+    if direction not in quiz_data or topic not in quiz_data[direction]["topics"]:
+        await query.message.reply_text("❌ Тема не найдена")
+        return
+    
+    # Выбираем случайный квиз из темы
+    quizzes = quiz_data[direction]["topics"][topic]["quizzes"]
+    selected_quiz = random.choice(quizzes)
+    
+    # Сохраняем данные в контексте
+    context.user_data["questions"] = selected_quiz["questions"]
     context.user_data["current_question"] = 0
     context.user_data["score"] = 0
-
+    context.user_data["quiz_title"] = selected_quiz.get("title", "Викторина")
+    
     await ask_question(update, context)
 
 # Задать вопрос с кнопками
 async def ask_question(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    if query:
+        await query.answer()
+    
     questions = context.user_data["questions"]
     current_idx = context.user_data["current_question"]
     
     if current_idx >= len(questions):
         final_score = context.user_data["score"]
-        await update.message.reply_text(f"🏆 Викторина завершена! Ваш счет: {final_score}")
-        update_user_score(update.message.from_user.id, final_score)
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=f"🏆 Викторина '{context.user_data['quiz_title']}' завершена!\nВаш счет: {final_score}"
+        )
+        update_user_score(update.effective_user.id, final_score)
         return
 
-    q_data = questions[current_idx]
-    question = q_data["question"]
-    correct = q_data["correct"]
-    all_answers = [correct] + q_data["wrong"]
-    
-    # Перемешиваем ответы
-    random.shuffle(all_answers)
+    question_data = questions[current_idx]
+    question = question_data["question"]
+    answers = question_data["answers"]
+    correct_idx = question_data["correct_answer"]
     
     # Сохраняем индекс правильного ответа
-    context.user_data["correct_index"] = all_answers.index(correct)
+    context.user_data["correct_index"] = correct_idx
+    context.user_data["current_explanation"] = question_data.get("explanation", "")
     
     # Создаем кнопки
     keyboard = [
         [InlineKeyboardButton(answer, callback_data=f"ans_{i}")]
-        for i, answer in enumerate(all_answers)
+        for i, answer in enumerate(answers)
     ]
     
-    await update.message.reply_text(
-        f"❓ Вопрос {current_idx + 1}/{len(questions)}:\n\n{question}",
-        reply_markup=InlineKeyboardMarkup(keyboard)
-    )
+    if query:
+        await query.edit_message_text(
+            text=f"❓ Вопрос {current_idx + 1}/{len(questions)}:\n\n{question}",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+    else:
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=f"❓ Вопрос {current_idx + 1}/{len(questions)}:\n\n{question}",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
 
 # Обработка ответа
 async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -161,13 +198,19 @@ async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     user_choice = int(query.data.split("_")[1])
     correct_idx = context.user_data["correct_index"]
+    explanation = context.user_data["current_explanation"]
     
     if user_choice == correct_idx:
         context.user_data["score"] += 10
-        await query.edit_message_text("✅ Правильно! +10 баллов")
+        response = "✅ Правильно! +10 баллов"
     else:
         correct_answer = query.message.reply_markup.inline_keyboard[correct_idx][0].text
-        await query.edit_message_text(f"❌ Неверно. Правильный ответ: {correct_answer}")
+        response = f"❌ Неверно. Правильный ответ: {correct_answer}"
+    
+    if explanation:
+        response += f"\n\n💡 {explanation}"
+    
+    await query.edit_message_text(response)
     
     # Следующий вопрос
     context.user_data["current_question"] += 1
@@ -220,6 +263,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if choice.startswith("ans_"):
         await handle_answer(update, context)
+        return
+    elif choice.startswith("dir_"):
+        await handle_direction(update, context)
+        return
+    elif choice.startswith("topic_"):
+        await handle_topic(update, context)
         return
 
     current_score = context.user_data.get("current_score", 0)
@@ -300,12 +349,15 @@ def main():
     init_db()
     app = ApplicationBuilder().token(TOKEN).build()
     
+    # Регистрация обработчиков команд
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("quiz", quiz))
     app.add_handler(CommandHandler("roulette", roulette))
     app.add_handler(CommandHandler("score", score))
     
-    app.add_handler(CallbackQueryHandler(button_handler, pattern="^(all|custom|ans_)"))
+    # Обработчики callback-запросов
+    app.add_handler(CallbackQueryHandler(button_handler))
+    
+    # Обработчик текстовых сообщений (для ставок)
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_bet))
     
     app.run_polling()
